@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Daybook</title>
+<!-- Compass favicon (SVG inline as data URI) -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230D2B5E'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='white' stroke-width='1.2'/%3E%3Cpolygon points='16,16 13,22 16,20 19,22' fill='white'/%3E%3Cpolygon points='16,16 13,10 16,12 19,10' fill='rgba(255,255,255,0.55)'/%3E%3Ccircle cx='16' cy='16' r='1.8' fill='white'/%3E%3Cline x1='16' y1='6.5' x2='16' y2='8.5' stroke='white' stroke-width='1.2'/%3E%3Cline x1='16' y1='23.5' x2='16' y2='25.5' stroke='white' stroke-width='1.2'/%3E%3Cline x1='6.5' y1='16' x2='8.5' y2='16' stroke='white' stroke-width='1.2'/%3E%3Cline x1='23.5' y1='16' x2='25.5' y2='16' stroke='white' stroke-width='1.2'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f2f4f6;--surface:#fff;--ink:#16202a;--mute:#5d6b78;--line:#d9dfe5;--accent:#1f6f78;--accent-ink:#fff;--danger:#b3372f;--chip:#dfeceb;color-scheme:light}
@@ -14,7 +16,9 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Figtree,system-ui,-apple-system,"Segoe UI",sans-serif}
 .wrap{max-width:720px;margin:0 auto;padding:20px 16px 56px}
 header{display:flex;justify-content:space-between;align-items:center}
-h1{font-size:1.7rem;margin:0;letter-spacing:-.02em}
+h1{font-size:1.7rem;margin:0;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+/* Compass logo in header */
+.logo{width:32px;height:32px;flex-shrink:0}
 nav{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:14px 0 18px;overflow-x:auto}
 nav button{background:none;border:0;padding:10px 12px;color:var(--mute);font:inherit;font-weight:500;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
 nav button[aria-selected=true]{color:var(--ink);border-color:var(--accent)}
@@ -43,15 +47,59 @@ button{font:inherit}
 footer{margin-top:28px;color:var(--mute);font-size:.9rem}
 summary{cursor:pointer}
 footer textarea{margin:8px 0;min-height:70px;font-size:.8rem}
+/* Forgot password link */
+.link-btn{background:none;border:0;color:var(--accent);font:inherit;font-size:.88rem;cursor:pointer;padding:0;text-decoration:underline}
+.link-btn:hover{opacity:.8}
+/* Auth message (success / error) */
+#auth-msg{font-size:.88rem;margin-top:6px;min-height:1.4em}
+#auth-msg.ok{color:var(--accent)}
+#auth-msg.err{color:var(--danger)}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><h1>Daybook</h1><div><button class="ghost" data-act="out" id="out" hidden>Sign out</button><button class="ghost" data-act="theme">Light / dark</button></div></header>
-<div id="login" class="panel" hidden><div class="row"><input id="em" type="email" class="grow" placeholder="Email" aria-label="Email"><input id="pw" type="password" class="grow" placeholder="Password" aria-label="Password"></div><div class="row"><button class="pri" data-act="signin">Sign in</button><button class="ghost" data-act="signup">Create account</button></div></div>
+<header>
+  <h1>
+    <!-- Inline SVG compass logo -->
+    <svg class="logo" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="32" height="32" rx="6" fill="#0D2B5E"/>
+      <circle cx="16" cy="16" r="10" fill="none" stroke="white" stroke-width="1.2"/>
+      <polygon points="16,16 13,22 16,20 19,22" fill="white"/>
+      <polygon points="16,16 13,10 16,12 19,10" fill="rgba(255,255,255,0.55)"/>
+      <circle cx="16" cy="16" r="1.8" fill="white"/>
+      <line x1="16" y1="6.5" x2="16" y2="8.5" stroke="white" stroke-width="1.2"/>
+      <line x1="16" y1="23.5" x2="16" y2="25.5" stroke="white" stroke-width="1.2"/>
+      <line x1="6.5" y1="16" x2="8.5" y2="16" stroke="white" stroke-width="1.2"/>
+      <line x1="23.5" y1="16" x2="25.5" y2="16" stroke="white" stroke-width="1.2"/>
+    </svg>
+    Daybook
+  </h1>
+  <div>
+    <button class="ghost" data-act="out" id="out" hidden>Sign out</button>
+    <button class="ghost" data-act="theme">Light / dark</button>
+  </div>
+</header>
+
+<!-- Login panel -->
+<div id="login" class="panel" hidden>
+  <div class="row">
+    <input id="em" type="email" class="grow" placeholder="Email" aria-label="Email">
+    <input id="pw" type="password" class="grow" placeholder="Password" aria-label="Password">
+  </div>
+  <div class="row">
+    <button class="pri" data-act="signin">Sign in</button>
+    <button class="ghost" data-act="signup">Create account</button>
+  </div>
+  <div class="row" style="margin-top:4px">
+    <button class="link-btn" data-act="forgot">Forgot password?</button>
+  </div>
+  <p id="auth-msg" role="status"></p>
+</div>
+
 <div id="app"></div>
+
 <footer>
-<p id="msg" class="meta" role="status"></p>
+  <p id="msg" class="meta" role="status"></p>
 </footer>
 </div>
 <script type="module">
@@ -81,7 +129,14 @@ try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.pars
 try { const t = localStorage.getItem("daybook:theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { msg("Could not save in this browser. Use Backup and restore to keep a copy."); } }
 let mt;
-function msg(t) { const m = document.getElementById("msg"); m.textContent = t; clearTimeout(mt); mt = setTimeout(() => m.textContent = "", 4000); }
+function msg(t) { const m = document.getElementById("msg"); m.textContent = t; clearTimeout(mt); mt = setTimeout(() => m.textContent = "", 5000); }
+
+/** Show message inside the login panel (success = green, error = red) */
+function authMsg(text, isOk = false) {
+  const el = document.getElementById("auth-msg");
+  el.textContent = text;
+  el.className = isOk ? "ok" : "err";
+}
 
 function form() {
   const e = cur(), id = e.id || "";
@@ -93,7 +148,7 @@ function form() {
     const sl = [1,2,3,4,5].map(n => `<option value="${n}"${(+e.sleep || 3) === n ? " selected" : ""}>Sleep ${n}/5</option>`).join("");
     return `<form class="panel" data-t="dreams">${hid}<div class="row"><input type="date" name="date" required value="${e.date || today()}" aria-label="Date"><input class="grow" name="title" required placeholder="Dream title" value="${esc(e.title)}"><select name="type" aria-label="Dream type">${opt(DT, e.type)}</select><select name="sleep" aria-label="Sleep quality">${sl}</select></div><div class="row"><textarea name="body" placeholder="What happened in the dream?">${esc(e.body)}</textarea></div>${btns}</form>`;
   }
-  return `<form class="panel" data-t="bucket">${hid}<div class="row"><input class="grow" name="title" required placeholder="A dream, goal, or place" value="${esc(e.title)}"><select name="cat" aria-label="Category">${opt(BC, e.cat)}</select><select name="status" aria-label="Status">${opt(BS, e.status)}</select><input type="number" name="year" min="2026" max="2100" placeholder="Target year" value="${e.year || ""}" style="width:130px"></div>${btns}</form>`;
+  return `<form class="panel" data-t="bucket">${hid}<div class="row"><input class="grow" name="title" required placeholder="A dream, goal, or place" value="${esc(e.title)}"><select name="cat" aria-label="Category">${opt(BC, e.cat)}</select><select name="status" aria-label="Status">${opt(BS, e.status)}</select><input type="number" name="year" min="2024" max="2100" placeholder="Target year" value="${e.year || ""}" style="width:130px"></div>${btns}</form>`;
 }
 
 function lTime() {
@@ -102,7 +157,7 @@ function lTime() {
   const m = t => +t.slice(0, 2) * 60 + +t.slice(3);
   const h = bs.reduce((s, b) => s + m(b.end) - m(b.start), 0) / 60;
   const d = bs.filter(b => b.done).length;
-  return `<p class="meta">${d} of ${bs.length} done, ${Math.round(h * 10) / 10} h planned</p>` + bs.map(b => `<div class="item${b.done ? " done" : ""}"><div class="time">${b.start} to ${b.end}</div><label><input type="checkbox" data-act="tick" data-id="${b.id}"${b.done ? " checked" : ""}> <span class="t">${esc(b.title)}</span></label>${acts(b.id)}</div>`).join("");
+  return `<p class="meta">${d} of ${bs.length} done, ${Math.round(h * 10) / 10} h planned</p>` + bs.map(b => `<div class="item${b.done ? " done" : ""}"><div class="time">${b.start} – ${b.end}</div><label><input type="checkbox" data-act="tick" data-id="${b.id}"${b.done ? " checked" : ""}> <span class="t">${esc(b.title)}</span></label>${acts(b.id)}</div>`).join("");
 }
 function lNotes() {
   const t = q.toLowerCase();
@@ -144,8 +199,12 @@ document.addEventListener("click", e => {
   else if (a === "edit") { editing = id; render(); window.scrollTo({top: 0}); }
   else if (a === "cancel") { editing = null; render(); }
   else if (a === "del") {
-    if (b.dataset.arm) { const k = KM[tab]; S[k] = S[k].filter(x => x.id !== id); rm(k, id); editing = null; render(); }
-    else { b.dataset.arm = 1; b.textContent = "Confirm"; setTimeout(() => { b.textContent = "Delete"; delete b.dataset.arm; }, 3000); }
+    if (b.dataset.arm) {
+      const k = KM[tab]; S[k] = S[k].filter(x => x.id !== id); rm(k, id); editing = null; render();
+    } else {
+      b.dataset.arm = 1; b.textContent = "Confirm?";
+      setTimeout(() => { if (b.dataset.arm) { b.textContent = "Delete"; delete b.dataset.arm; } }, 3000);
+    }
   }
   else if (a === "tick") { const x = S.blocks.find(x => x.id === id); x.done = !x.done; put("blocks", x); paint(); }
   else if (a === "cycle") { const x = S.bucket.find(x => x.id === id); x.status = BS[(BS.indexOf(x.status) + 1) % 3]; put("bucket", x); paint(); }
@@ -181,8 +240,9 @@ document.addEventListener("submit", e => {
 render();
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
 const fb = initializeApp({
   apiKey: "AIzaSyAxv4f90OsOqstlenr8iHNoWxyD3uldKxY",
   authDomain: "daybook-53705.firebaseapp.com",
@@ -191,42 +251,65 @@ const fb = initializeApp({
   messagingSenderId: "2849436950",
   appId: "1:2849436950:web:3263238225f23da5988c37"
 });
+
 const auth = getAuth(fb), db = getFirestore(fb);
 let uidCur = null, unsub = null, first = true;
 const KIND = {blocks: "block", notes: "note", dreams: "dream", bucket: "bucket"};
 const colRef = () => collection(db, "users", uidCur, "entries");
+
 function toDoc(k, x) {
   const b = {type: KIND[k], title: x.title, upd: x.upd || Date.now()};
-  if (k === "blocks") Object.assign(b, {date: x.day, start: x.start, end: x.end, done: !!x.done});
-  if (k === "notes") Object.assign(b, {body: x.body || "", tag: x.tag});
-  if (k === "dreams") Object.assign(b, {body: x.body || "", date: x.date, tag: x.type, sleep: +x.sleep || 3});
-  if (k === "bucket") Object.assign(b, {tag: x.cat, status: x.status, year: +x.year || 0});
+  if (k === "blocks")  Object.assign(b, {date: x.day, start: x.start, end: x.end, done: !!x.done});
+  if (k === "notes")   Object.assign(b, {body: x.body || "", tag: x.tag});
+  if (k === "dreams")  Object.assign(b, {body: x.body || "", date: x.date, tag: x.type, sleep: +x.sleep || 3});
+  if (k === "bucket")  Object.assign(b, {tag: x.cat, status: x.status, year: +x.year || 0});
   return b;
 }
 function fromDoc(id, d) {
   const upd = d.upd || 0;
-  if (d.type === "block") return ["blocks", {id, title: d.title, day: d.date, start: d.start || "09:00", end: d.end || "10:00", done: !!d.done, upd}];
-  if (d.type === "note") return ["notes", {id, title: d.title, body: d.body || "", tag: d.tag || "Journal", upd}];
-  if (d.type === "dream") return ["dreams", {id, title: d.title, body: d.body || "", date: d.date || today(), type: d.tag || "Normal", sleep: d.sleep || 3, feeling: "", upd}];
+  if (d.type === "block")  return ["blocks", {id, title: d.title, day: d.date, start: d.start || "09:00", end: d.end || "10:00", done: !!d.done, upd}];
+  if (d.type === "note")   return ["notes",  {id, title: d.title, body: d.body || "", tag: d.tag || "Journal", upd}];
+  if (d.type === "dream")  return ["dreams", {id, title: d.title, body: d.body || "", date: d.date || today(), type: d.tag || "Normal", sleep: d.sleep || 3, feeling: "", upd}];
   if (d.type === "bucket") return ["bucket", {id, title: d.title, cat: d.tag || "Other", status: d.status || "Dream", year: d.year || "", upd}];
   return null;
 }
+
 const put = (k, x) => setDoc(doc(colRef(), x.id), toDoc(k, x), {merge: true}).catch(e => msg("Could not save: " + e.message));
-const rm = (k, id) => deleteDoc(doc(colRef(), id)).catch(e => msg("Could not delete: " + e.message));
+const rm  = (k, id) => deleteDoc(doc(colRef(), id)).catch(e => msg("Could not delete: " + e.message));
+
+// ── Auth button handler (signin / signup / forgot / signout) ──────────────
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-act]"); if (!b) return;
   const a = b.dataset.act;
+
   if (a === "signin" || a === "signup") {
-    const em = document.getElementById("em").value.trim(), pw = document.getElementById("pw").value;
-    (a === "signin" ? signInWithEmailAndPassword : createUserWithEmailAndPassword)(auth, em, pw).catch(x => msg(x.message));
-  } else if (a === "out") signOut(auth);
+    const em = document.getElementById("em").value.trim();
+    const pw = document.getElementById("pw").value;
+    authMsg(""); // clear previous message
+    const fn = a === "signin" ? signInWithEmailAndPassword : createUserWithEmailAndPassword;
+    fn(auth, em, pw).catch(x => authMsg(x.message));
+
+  } else if (a === "forgot") {
+    const em = document.getElementById("em").value.trim();
+    authMsg(""); // clear previous message
+    if (!em) { authMsg("Enter your email address first."); return; }
+    sendPasswordResetEmail(auth, em)
+      .then(() => authMsg("Password reset email sent! Check your inbox.", true))
+      .catch(x => authMsg(x.message));
+
+  } else if (a === "out") {
+    signOut(auth);
+  }
 });
+
 onAuthStateChanged(auth, u => {
   if (unsub) { unsub(); unsub = null; }
   uidCur = u ? u.uid : null; first = true; editing = null;
-  document.getElementById("login").hidden = !!u; document.getElementById("out").hidden = !u; $app.hidden = !u;
+  document.getElementById("login").hidden = !!u;
+  document.getElementById("out").hidden = !u;
+  $app.hidden = !u;
   S = {blocks: [], notes: [], dreams: [], bucket: []};
-  if (!u) { $app.innerHTML = ""; return; }
+  if (!u) { $app.innerHTML = ""; authMsg(""); return; }
   unsub = onSnapshot(colRef(), snap => {
     const n = {blocks: [], notes: [], dreams: [], bucket: []};
     snap.forEach(d => { const r = fromDoc(d.id, d.data()); if (r) n[r[0]].push(r[1]); });
